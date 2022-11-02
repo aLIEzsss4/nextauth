@@ -5,6 +5,7 @@ import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import { SessionProvider } from 'next-auth/react';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
@@ -20,9 +21,9 @@ const { chains, provider, webSocketProvider } = configureChains(
     alchemyProvider({
       // This is Alchemy's default API key.
       // You can get your own at https://dashboard.alchemyapi.io
-      apiKey: '51TT7fdiMtNYzM5YaNtmJ4FDqgdX0BdQ',
+      apiKey: '',
     }),
-    publicProvider(),
+    // publicProvider(),
   ]
 );
 
@@ -38,12 +39,15 @@ const wagmiClient = createClient({
   webSocketProvider,
 });
 
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
+      <SessionProvider session={pageProps.session} refetchInterval={0} >
+        <RainbowKitProvider chains={chains}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </SessionProvider>
     </WagmiConfig>
   );
 }
